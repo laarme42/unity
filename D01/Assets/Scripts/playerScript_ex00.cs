@@ -14,6 +14,7 @@ public class playerScript_ex00 : MonoBehaviour {
 	private static int 			controller = 0;
 	private Rigidbody2D 		myRb;
 	private static int 			exit = 0;
+	public static int 			isPressed = 0;
 
 
 
@@ -44,37 +45,52 @@ public class playerScript_ex00 : MonoBehaviour {
 			}
 		} else if (collider.tag.Split ('_') [0] == "teleport") {
 			transform.position = new Vector3 (float.Parse (collider.tag.Split ('_') [1]), float.Parse (collider.tag.Split ('_') [2]), 0);
-		} else if (collider.tag == "button") {
+		} else if (collider.tag == "button" && isPressed == 0) {
 			if (tag == "Thomas") {
 				mur = GameObject.FindGameObjectWithTag ("mur");
 				mur.GetComponent<BoxCollider2D> ().enabled = false;
 				mur.GetComponent<SpriteRenderer> ().sortingOrder = -1;
+				isPressed = 1;
 
 			} else if (tag == "John") {
 				mur = GameObject.FindGameObjectWithTag ("trap");
 				mur.GetComponent<BoxCollider2D> ().enabled = false;
 				mur.GetComponent<SpriteRenderer> ().sortingOrder = -1;
-				
+				isPressed = 2;
 			}
+			else
+				isPressed = 3;
 			button = GameObject.FindGameObjectWithTag ("button");
 			button.GetComponent<Transform> ().Translate (0, -0.2F, 0);
 		}
 	}
 	void OnTriggerExit2D(Collider2D collider)
 	{
+		//BOOLEEN CHECK BOUTON APPUYER
+		//FOSSE POUR RECUPERER HERO CAGE PAS DE VIDE SANS FIN
 		if (collider.tag == "button") {
-			if (tag == "Thomas") {
+			if (tag == "Thomas" && isPressed == 1) {
 				mur = GameObject.FindGameObjectWithTag ("mur");
 				mur.GetComponent<BoxCollider2D> ().enabled = true;
 				mur.GetComponent<SpriteRenderer> ().sortingOrder = 1;
+				button = GameObject.FindGameObjectWithTag ("button");
+				button.GetComponent<Transform>().Translate(0,0.2F,0);
+				isPressed = 0;
 
-			} else if (tag == "John") {
+			} else if (tag == "John" && isPressed == 2) {
 				mur = GameObject.FindGameObjectWithTag ("trap");
 				mur.GetComponent<BoxCollider2D> ().enabled = true;
-				mur.GetComponent<SpriteRenderer> ().sortingOrder = 1;	
+				mur.GetComponent<SpriteRenderer> ().sortingOrder = 1;
+				isPressed = 0;
+				button = GameObject.FindGameObjectWithTag ("button");
+				button.GetComponent<Transform>().Translate(0,0.2F,0);
 			}
-			button = GameObject.FindGameObjectWithTag ("button");
-			button.GetComponent<Transform>().Translate(0,0.2F,0);
+			else if (isPressed == 3)
+			{
+				isPressed = 0;
+				button = GameObject.FindGameObjectWithTag ("button");
+				button.GetComponent<Transform>().Translate(0,0.2F,0);
+			}
 		}
 		if (collider.tag.Split('_')[0] == tag)
 			exit -= 1;
@@ -102,7 +118,7 @@ public class playerScript_ex00 : MonoBehaviour {
 					myRb.AddForce(new Vector2(moveSpeed, 0), ForceMode2D.Impulse);
 			}
 			if (Input.GetKeyDown (KeyCode.Space)) {
-				if ((myRb.velocity.y >= 0) && (myRb.velocity.y < 0.1))
+				if ((myRb.velocity.y >= 0) && (myRb.velocity.y < 0.01))
 					myRb.AddForce(new Vector2(0, jumpingStrength), ForceMode2D.Impulse);
 			}
 			int index = 0;

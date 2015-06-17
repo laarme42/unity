@@ -12,9 +12,7 @@ public class moveHorizontal : MonoBehaviour {
 	private int endtime;
 	private bool first = true;
 	void Start () {
-		
 	}
-	
 	// Update is called once per frame
 	void Update () {
 		if (first) {
